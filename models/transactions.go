@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/astaxie/beego/logs"
 	"github.com/beego/beego/v2/client/orm"
 )
 
@@ -68,10 +69,11 @@ func GetTransactionsByCode(code string) (v *Transactions, err error) {
 
 // GetTransactionsById retrieves Transactions by Agent Id. Returns error if
 // Id doesn't exist
-func GetTransactionsByAgentId(id int64) (v *Transactions, err error) {
+func GetTransactionsByAgentId(id int64) (v []*Transactions, err error) {
 	o := orm.NewOrm()
-	v = &Transactions{TransactionId: id}
-	if _, err = o.QueryTable(new(Transactions)).Filter("TransactionId", id).RelatedSel().All(v); err == nil {
+	// v = &Transactions{SendingAgentId: id}
+	if m, err := o.QueryTable(new(Transactions)).Filter("SendingAgentId", id).RelatedSel().All(&v); err == nil {
+		logs.Info("Returned rows", m)
 		return v, nil
 	}
 	return nil, err

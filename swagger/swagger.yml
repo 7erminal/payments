@@ -1,0 +1,1298 @@
+swagger: "2.0"
+info:
+  title: beego Test API
+  description: |
+    beego has a very cool tools to autogenerate documents for your API
+  version: 1.0.0
+  termsOfService: http://beego.me/
+  contact:
+    email: astaxie@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+basePath: /v1
+paths:
+  /agent-credentials/:
+    get:
+      tags:
+      - agent-credentials
+      description: |-
+        get Credentials
+        <br>
+      operationId: CredentialsController.Get All
+      parameters:
+      - in: query
+        name: query
+        description: Filter. e.g. col1:v1,col2:v2 ...
+        type: string
+      - in: query
+        name: fields
+        description: Fields returned. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: sortby
+        description: Sorted-by fields. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: order
+        description: Order corresponding to each sortby field, if single value, apply
+          to all sortby fields. e.g. desc,asc ...
+        type: string
+      - in: query
+        name: limit
+        description: Limit the size of result set. Must be an integer
+        type: string
+      - in: query
+        name: offset
+        description: Start position of result set. Must be an integer
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Credentials'
+        "403":
+          description: ""
+    post:
+      tags:
+      - agent-credentials
+      description: |-
+        create Credentials
+        <br>
+      operationId: CredentialsController.Post
+      parameters:
+      - in: body
+        name: body
+        description: body for Credentials content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Credentials'
+      responses:
+        "201":
+          description: '{int} models.Credentials'
+        "403":
+          description: body is empty
+  /agent-credentials/{agentid}:
+    put:
+      tags:
+      - agent-credentials
+      description: |-
+        update the Credentials
+        <br>
+      operationId: CredentialsController.Put
+      parameters:
+      - in: path
+        name: agentid
+        description: The id you want to update
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Credentials content
+        required: true
+        schema:
+          $ref: '#/definitions/models.CredentialsRequest'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Credentials'
+        "403":
+          description: :id is not int
+  /agent-credentials/{id}:
+    get:
+      tags:
+      - agent-credentials
+      description: |-
+        get Credentials by id
+        <br>
+      operationId: CredentialsController.Get One
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Credentials'
+        "403":
+          description: :id is empty
+    delete:
+      tags:
+      - agent-credentials
+      description: |-
+        delete the Credentials
+        <br>
+      operationId: CredentialsController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+        "403":
+          description: id is empty
+  /agent-credentials/validate:
+    post:
+      tags:
+      - agent-credentials
+      description: |-
+        create Credentials
+        <br>
+      operationId: CredentialsController.validate
+      parameters:
+      - in: body
+        name: body
+        description: body for Credentials content
+        required: true
+        schema:
+          $ref: '#/definitions/models.CredentialsRequest'
+      responses:
+        "201":
+          description: '{int} models.Credentials'
+        "403":
+          description: body is empty
+  /agents/:
+    get:
+      tags:
+      - agents
+      description: |-
+        get Agents
+        <br>
+      operationId: AgentsController.Get All
+      parameters:
+      - in: query
+        name: query
+        description: Filter. e.g. col1:v1,col2:v2 ...
+        type: string
+      - in: query
+        name: fields
+        description: Fields returned. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: sortby
+        description: Sorted-by fields. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: order
+        description: Order corresponding to each sortby field, if single value, apply
+          to all sortby fields. e.g. desc,asc ...
+        type: string
+      - in: query
+        name: limit
+        description: Limit the size of result set. Must be an integer
+        type: string
+      - in: query
+        name: offset
+        description: Start position of result set. Must be an integer
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Agents'
+        "403":
+          description: ""
+    post:
+      tags:
+      - agents
+      description: |-
+        create Agents
+        <br>
+      operationId: AgentsController.Post
+      parameters:
+      - in: body
+        name: body
+        description: body for Agents content
+        required: true
+        schema:
+          $ref: '#/definitions/models.AgentDetailsRequest'
+      responses:
+        "201":
+          description: '{int} models.Agents'
+        "403":
+          description: body is empty
+  /agents/{id}:
+    get:
+      tags:
+      - agents
+      description: |-
+        get Agents by id
+        <br>
+      operationId: AgentsController.Get One
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Agents'
+        "403":
+          description: :id is empty
+    put:
+      tags:
+      - agents
+      description: |-
+        update the Agents
+        <br>
+      operationId: AgentsController.Put
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Agents content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Agents'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Agents'
+        "403":
+          description: :id is not int
+    delete:
+      tags:
+      - agents
+      description: |-
+        delete the Agents
+        <br>
+      operationId: AgentsController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+        "403":
+          description: id is empty
+  /agents/get-agent-balance/{AgentId}:
+    get:
+      tags:
+      - agents
+      description: |-
+        get Agent balance by id
+        <br>
+      operationId: AgentsController.Get Agent Balance
+      parameters:
+      - in: path
+        name: AgentId
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Balances'
+        "403":
+          description: :AgentId is empty
+  /branches/:
+    get:
+      tags:
+      - branches
+      description: |-
+        get Branches
+        <br>
+      operationId: BranchesController.Get All
+      parameters:
+      - in: query
+        name: query
+        description: Filter. e.g. col1:v1,col2:v2 ...
+        type: string
+      - in: query
+        name: fields
+        description: Fields returned. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: sortby
+        description: Sorted-by fields. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: order
+        description: Order corresponding to each sortby field, if single value, apply
+          to all sortby fields. e.g. desc,asc ...
+        type: string
+      - in: query
+        name: limit
+        description: Limit the size of result set. Must be an integer
+        type: string
+      - in: query
+        name: offset
+        description: Start position of result set. Must be an integer
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Branches'
+        "403":
+          description: ""
+    post:
+      tags:
+      - branches
+      description: |-
+        create Branches
+        <br>
+      operationId: BranchesController.Post
+      parameters:
+      - in: body
+        name: body
+        description: body for Branches content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Branches'
+      responses:
+        "201":
+          description: '{int} models.Branches'
+        "403":
+          description: body is empty
+  /branches/{id}:
+    get:
+      tags:
+      - branches
+      description: |-
+        get Branches by id
+        <br>
+      operationId: BranchesController.Get One
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Branches'
+        "403":
+          description: :id is empty
+    put:
+      tags:
+      - branches
+      description: |-
+        update the Branches
+        <br>
+      operationId: BranchesController.Put
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Branches content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Branches'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Branches'
+        "403":
+          description: :id is not int
+    delete:
+      tags:
+      - branches
+      description: |-
+        delete the Branches
+        <br>
+      operationId: BranchesController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+        "403":
+          description: id is empty
+  /fund/:
+    post:
+      tags:
+      - fund
+      description: |-
+        create Balances
+        <br>
+      operationId: FundController.Post
+      parameters:
+      - in: body
+        name: body
+        description: body for Balances content
+        required: true
+        schema:
+          $ref: '#/definitions/models.BalanceRequest'
+      responses:
+        "201":
+          description: '{int} models.Balances'
+        "403":
+          description: body is empty
+  /status-codes/:
+    get:
+      tags:
+      - status-codes
+      description: |-
+        get Status_codes
+        <br>
+      operationId: Status_codesController.Get All
+      parameters:
+      - in: query
+        name: query
+        description: Filter. e.g. col1:v1,col2:v2 ...
+        type: string
+      - in: query
+        name: fields
+        description: Fields returned. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: sortby
+        description: Sorted-by fields. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: order
+        description: Order corresponding to each sortby field, if single value, apply
+          to all sortby fields. e.g. desc,asc ...
+        type: string
+      - in: query
+        name: limit
+        description: Limit the size of result set. Must be an integer
+        type: string
+      - in: query
+        name: offset
+        description: Start position of result set. Must be an integer
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Status_codes'
+        "403":
+          description: ""
+    post:
+      tags:
+      - status-codes
+      description: |-
+        create Status_codes
+        <br>
+      operationId: Status_codesController.Post
+      parameters:
+      - in: body
+        name: body
+        description: body for Status_codes content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Status_codes'
+      responses:
+        "201":
+          description: '{int} models.Status_codes'
+        "403":
+          description: body is empty
+  /status-codes/{id}:
+    get:
+      tags:
+      - status-codes
+      description: |-
+        get Status_codes by id
+        <br>
+      operationId: Status_codesController.Get One
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Status_codes'
+        "403":
+          description: :id is empty
+    put:
+      tags:
+      - status-codes
+      description: |-
+        update the Status_codes
+        <br>
+      operationId: Status_codesController.Put
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Status_codes content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Status_codes'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Status_codes'
+        "403":
+          description: :id is not int
+    delete:
+      tags:
+      - status-codes
+      description: |-
+        delete the Status_codes
+        <br>
+      operationId: Status_codesController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+        "403":
+          description: id is empty
+  /transactions/:
+    get:
+      tags:
+      - transactions
+      description: |-
+        get Transactions
+        <br>
+      operationId: TransactionsController.Get All
+      parameters:
+      - in: query
+        name: query
+        description: Filter. e.g. col1:v1,col2:v2 ...
+        type: string
+      - in: query
+        name: fields
+        description: Fields returned. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: sortby
+        description: Sorted-by fields. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: order
+        description: Order corresponding to each sortby field, if single value, apply
+          to all sortby fields. e.g. desc,asc ...
+        type: string
+      - in: query
+        name: limit
+        description: Limit the size of result set. Must be an integer
+        type: string
+      - in: query
+        name: offset
+        description: Start position of result set. Must be an integer
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Transactions'
+        "403":
+          description: ""
+    post:
+      tags:
+      - transactions
+      description: |-
+        create Transactions
+        <br>
+      operationId: TransactionsController.Post
+      parameters:
+      - in: body
+        name: body
+        description: body for Transactions content
+        required: true
+        schema:
+          $ref: '#/definitions/models.TransactionRequest'
+      responses:
+        "201":
+          description: '{int} models.Transactions'
+        "403":
+          description: body is empty
+  /transactions/{id}:
+    get:
+      tags:
+      - transactions
+      description: |-
+        get Transactions by id
+        <br>
+      operationId: TransactionsController.Get One
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Transactions'
+        "403":
+          description: :id is empty
+    put:
+      tags:
+      - transactions
+      description: |-
+        update the Transactions
+        <br>
+      operationId: TransactionsController.Put
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Transactions content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Transactions'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Transactions'
+        "403":
+          description: :id is not int
+    delete:
+      tags:
+      - transactions
+      description: |-
+        delete the Transactions
+        <br>
+      operationId: TransactionsController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+        "403":
+          description: id is empty
+  /transactions/cash-out:
+    post:
+      tags:
+      - transactions
+      description: |-
+        cashout Transactions
+        <br>
+      operationId: TransactionsController.CashOut
+      parameters:
+      - in: body
+        name: body
+        description: body for Transactions content
+        required: true
+        schema:
+          $ref: '#/definitions/models.CashoutRequest'
+      responses:
+        "201":
+          description: '{int} models.Transfers'
+        "403":
+          description: body is empty
+  /transactions/cash-out-details:
+    post:
+      tags:
+      - transactions
+      description: |-
+        cashout Transaction details
+        <br>
+      operationId: TransactionsController.GetCashOutDetails
+      parameters:
+      - in: body
+        name: body
+        description: body for Transactions content
+        required: true
+        schema:
+          $ref: '#/definitions/models.CashoutRequest'
+      responses:
+        "200":
+          description: '{int} models.Transfers'
+        "201":
+          description: '{int} models.Transactions'
+        "403":
+          description: body is empty
+  /transactions/get-agent-transactions/{agentId}:
+    get:
+      tags:
+      - transactions
+      description: |-
+        get Transactions by agent Id
+        <br>
+      operationId: TransactionsController.Get Agent Transactions With AgentID
+      parameters:
+      - in: path
+        name: agentId
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Transactions'
+        "403":
+          description: :agentId is empty
+  /users/:
+    get:
+      tags:
+      - users
+      description: |-
+        get Users
+        <br>
+      operationId: UsersController.Get All
+      parameters:
+      - in: query
+        name: query
+        description: Filter. e.g. col1:v1,col2:v2 ...
+        type: string
+      - in: query
+        name: fields
+        description: Fields returned. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: sortby
+        description: Sorted-by fields. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: order
+        description: Order corresponding to each sortby field, if single value, apply
+          to all sortby fields. e.g. desc,asc ...
+        type: string
+      - in: query
+        name: limit
+        description: Limit the size of result set. Must be an integer
+        type: string
+      - in: query
+        name: offset
+        description: Start position of result set. Must be an integer
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Users'
+        "403":
+          description: ""
+    post:
+      tags:
+      - users
+      description: |-
+        create Users
+        <br>
+      operationId: UsersController.Post
+      parameters:
+      - in: body
+        name: body
+        description: body for Users content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Users'
+      responses:
+        "201":
+          description: '{int} models.Users'
+        "403":
+          description: body is empty
+  /users/{id}:
+    get:
+      tags:
+      - users
+      description: |-
+        get Users by id
+        <br>
+      operationId: UsersController.Get One
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Users'
+        "403":
+          description: :id is empty
+    put:
+      tags:
+      - users
+      description: |-
+        update the Users
+        <br>
+      operationId: UsersController.Put
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Users content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Users'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Users'
+        "403":
+          description: :id is not int
+    delete:
+      tags:
+      - users
+      description: |-
+        delete the Users
+        <br>
+      operationId: UsersController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+        "403":
+          description: id is empty
+definitions:
+  models.Activation_codes:
+    title: Activation_codes
+    type: object
+    properties:
+      ActivationCode:
+        type: string
+      ActivationCodeId:
+        type: integer
+        format: int64
+      Active:
+        type: integer
+        format: int64
+      CreatedBy:
+        type: integer
+        format: int64
+      DateCreated:
+        type: string
+        format: datetime
+      DateModified:
+        type: string
+        format: datetime
+      ModifiedBy:
+        type: integer
+        format: int64
+      Processed:
+        type: boolean
+  models.AgentDetailsRequest:
+    title: AgentDetailsRequest
+    type: object
+    properties:
+      AgentName:
+        type: string
+      BranchId:
+        type: integer
+        format: int64
+      IdNumber:
+        type: string
+      IdType:
+        type: integer
+        format: int64
+      Msisdn:
+        type: string
+      Source:
+        type: string
+      UserId:
+        type: integer
+        format: int64
+  models.Agents:
+    title: Agents
+    type: object
+    properties:
+      Active:
+        type: integer
+        format: int64
+      AgentId:
+        type: integer
+        format: int64
+      AgentName:
+        type: string
+      AgentNumber:
+        type: string
+      BranchId:
+        type: integer
+        format: int64
+      CreatedBy:
+        type: integer
+        format: int64
+      DateCreated:
+        type: string
+        format: datetime
+      DateModified:
+        type: string
+        format: datetime
+      IdNumber:
+        type: string
+      IdType:
+        type: integer
+        format: int64
+      IsVerified:
+        type: boolean
+      ModifiedBy:
+        type: integer
+        format: int64
+      Password:
+        type: string
+      Username:
+        type: string
+  models.BalanceRequest:
+    title: BalanceRequest
+    type: object
+    properties:
+      Action:
+        type: string
+      AgentId:
+        type: integer
+        format: int64
+      Balance:
+        type: number
+        format: float
+      BalanceId:
+        type: integer
+        format: int64
+  models.Balances:
+    title: Balances
+    type: object
+    properties:
+      AgentId:
+        type: integer
+        format: int64
+      Balance:
+        type: number
+        format: float
+      BalanceId:
+        type: integer
+        format: int64
+  models.Branches:
+    title: Branches
+    type: object
+    properties:
+      BranchAddress:
+        type: string
+      BranchDescription:
+        type: string
+      BranchId:
+        type: integer
+        format: int64
+      BranchLocation:
+        type: string
+      BranchName:
+        type: string
+      BranchNumber:
+        type: string
+      BranchPhoneNumber:
+        type: string
+  models.CashoutRequest:
+    title: CashoutRequest
+    type: object
+    properties:
+      Amount:
+        type: number
+        format: float
+      Code:
+        type: string
+      ReceiverName:
+        type: string
+      ReceiverNumber:
+        type: string
+      ReceivingAgentId:
+        type: integer
+        format: int64
+      ReceivingBranchId:
+        type: integer
+        format: int64
+      Source:
+        type: string
+      TransactionType:
+        type: string
+  models.Credentials:
+    title: Credentials
+    type: object
+    properties:
+      AgentId:
+        type: integer
+        format: int64
+      Password:
+        type: string
+      Username:
+        type: string
+  models.CredentialsRequest:
+    title: CredentialsRequest
+    type: object
+    properties:
+      Password:
+        type: string
+      Username:
+        type: string
+  models.Id_types:
+    title: Id_types
+    type: object
+    properties:
+      Active:
+        type: integer
+        format: int64
+      CreatedBy:
+        type: integer
+        format: int64
+      DateCreated:
+        type: string
+        format: datetime
+      DateModified:
+        type: string
+        format: datetime
+      IdTypeId:
+        type: integer
+        format: int64
+      IdTypeName:
+        type: string
+      ModifiedBy:
+        type: integer
+        format: int64
+  models.Requests:
+    title: Requests
+    type: object
+    properties:
+      Active:
+        type: integer
+        format: int64
+      CreatedBy:
+        type: integer
+        format: int64
+      DateCreated:
+        type: string
+        format: datetime
+      DateModified:
+        type: string
+        format: datetime
+      ModifiedBy:
+        type: integer
+        format: int64
+      ReceivedDate:
+        type: string
+        format: datetime
+      Request:
+        type: string
+      RequestId:
+        type: integer
+        format: int64
+      Response:
+        type: string
+      ResponseDate:
+        type: string
+        format: datetime
+      Source:
+        type: string
+  models.Status_codes:
+    title: Status_codes
+    type: object
+    properties:
+      Active:
+        type: integer
+        format: int64
+      Code:
+        type: string
+      CreatedBy:
+        type: integer
+        format: int64
+      DateCreated:
+        type: string
+        format: datetime
+      DateModified:
+        type: string
+        format: datetime
+      Description:
+        type: string
+      Message:
+        type: string
+      ModifiedBy:
+        type: integer
+        format: int64
+      StatusCodeId:
+        type: integer
+        format: int64
+  models.TransactionRequest:
+    title: TransactionRequest
+    type: object
+    properties:
+      Amount:
+        type: number
+        format: float
+      ReceiverName:
+        type: string
+      ReceiverNumber:
+        type: string
+      SenderName:
+        type: string
+      SenderNumber:
+        type: string
+      SendingAgentId:
+        type: integer
+        format: int64
+      SendingBranchId:
+        type: integer
+        format: int64
+      Source:
+        type: string
+      TransactionType:
+        type: string
+  models.Transactions:
+    title: Transactions
+    type: object
+    properties:
+      Active:
+        type: integer
+        format: int64
+      Amount:
+        type: number
+        format: float
+      CreatedBy:
+        type: integer
+        format: int64
+      DateCreated:
+        type: string
+        format: datetime
+      DateModified:
+        type: string
+        format: datetime
+      ModifiedBy:
+        type: integer
+        format: int64
+      ReceiverName:
+        type: string
+      ReceiverNumber:
+        type: string
+      ReceivingAgentId:
+        type: integer
+        format: int64
+      ReceivingBranchId:
+        type: integer
+        format: int64
+      RequestId:
+        type: integer
+        format: int64
+      SenderName:
+        type: string
+      SenderNumber:
+        type: string
+      SendingAgentId:
+        type: integer
+        format: int64
+      SendingBranchId:
+        type: integer
+        format: int64
+      StatusCode:
+        type: integer
+        format: int64
+      TransactionCode:
+        type: string
+      TransactionId:
+        type: integer
+        format: int64
+      TransactionType:
+        type: integer
+        format: int64
+  models.Users:
+    title: Users
+    type: object
+    properties:
+      Active:
+        type: integer
+        format: int64
+      CreatedBy:
+        type: integer
+        format: int64
+      DateCreated:
+        type: string
+        format: datetime
+      DateModified:
+        type: string
+        format: datetime
+      Email:
+        type: string
+      FirstName:
+        type: string
+      Gender:
+        type: string
+      IdNumber:
+        type: string
+      IdType:
+        type: string
+      IsVerified:
+        type: boolean
+      LastName:
+        type: string
+      ModifiedBy:
+        type: integer
+        format: int64
+      OtherNames:
+        type: string
+      PhoneNumber:
+        type: string
+      UserId:
+        type: integer
+        format: int64
+      UserType:
+        type: integer
+        format: int64
+tags:
+- name: users
+  description: |
+    UsersController operations for Users
+- name: agents
+  description: |
+    AgentsController operations for Agents
+- name: agent-credentials
+  description: |
+    CredentialsController operations for Credentials
+- name: branches
+  description: |
+    BranchesController operations for Branches
+- name: transactions
+  description: |
+    TransactionsController operations for Transactions
+- name: status-codes
+  description: |
+    Status_codesController operations for Status_codes
+- name: fund
+  description: |
+    FundController operations for Requests

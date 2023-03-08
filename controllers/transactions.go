@@ -33,7 +33,7 @@ func (c *TransactionsController) URLMapping() {
 }
 
 func RandStringBytes(n int) string {
-	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	const letterBytes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	const (
 		letterIdxBits = 6                    // 6 bits to represent a letter index
 		letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
@@ -104,16 +104,28 @@ func (c *TransactionsController) Post() {
 							// Update sender's balance
 							if err := models.UpdateBalancesByAgentId(&senderAfterBalance, "subtract"); err == nil {
 								// var balUpdate = models.Transfers{TransferId: tr.TransferId}
-								tr.Sending_balance_after = senderAfterBalance.Balance
 
-								// Update balance after in transfers table after sender balance has been updated
-								if err := models.UpdateTransfersById(&tr); err == nil {
-									c.Data["json"] = "OK"
-									c.Ctx.Output.SetStatus(201)
-									c.Data["json"] = t
-								} else {
+								h_balance, err := models.GetBalanceIncById(2)
+
+								if err != nil {
 									c.Data["json"] = err.Error()
+								} else {
+									tr.Sending_balance_after = senderAfterBalance.Balance
+
+									h_balance.Balance = h_balance.Balance + v.Amount
+
+									if err := models.UpdateBalance_incById(h_balance); err == nil {
+										// Update balance after in transfers table after sender balance has been updated
+										if err := models.UpdateTransfersById(&tr); err == nil {
+											c.Data["json"] = "OK"
+											c.Ctx.Output.SetStatus(201)
+											c.Data["json"] = t
+										} else {
+											c.Data["json"] = err.Error()
+										}
+									}
 								}
+
 							} else {
 								c.Data["json"] = err.Error()
 							}
@@ -237,33 +249,47 @@ func (c *TransactionsController) CashOut() {
 
 								receiverAfterBalance := models.Balances{AgentId: int(v.ReceivingAgentId), Balance: v.Amount}
 
-								if err := models.UpdateBalancesByAgentId(&receiverAfterBalance, "add"); err == nil {
-									// var balUpdate = models.Transfers{TransferId: tr.TransferId}
-									cashout_.Receiving_balance_after = receiverAfterBalance.Balance
+								h_balance, err := models.GetBalanceIncById(2)
 
-									cashout_.DateModified = time.Now()
-									cashout_.Active = 1
-									cashout_.ModifiedBy = int(v.ReceivingAgentId)
+								if err != nil {
+									c.Data["json"] = err.Error()
+								} else {
 
-									// Update balance after in transfers table after sender balance has been updated
-									if err := models.UpdateCashOutsById(&cashout_); err == nil {
-										getTransaction.Active = 1
-										getTransaction.DateModified = time.Now()
-										getTransaction.ModifiedBy = int(v.ReceivingAgentId)
+									if err := models.UpdateBalancesByAgentId(&receiverAfterBalance, "add"); err == nil {
+										// var balUpdate = models.Transfers{TransferId: tr.TransferId}
+										h_balance.Balance = h_balance.Balance - v.Amount
 
-										// Update transfers table to complete the transaction
-										if err := models.UpdateTransfersById(getTransaction); err == nil {
-											c.Data["json"] = "OK"
-											c.Ctx.Output.SetStatus(201)
-											c.Data["json"] = cashout_
+										if err := models.UpdateBalance_incById(h_balance); err == nil {
+											cashout_.Receiving_balance_after = receiverAfterBalance.Balance
+
+											cashout_.DateModified = time.Now()
+											cashout_.Active = 1
+											cashout_.ModifiedBy = int(v.ReceivingAgentId)
+
+											// Update balance after in transfers table after sender balance has been updated
+											if err := models.UpdateCashOutsById(&cashout_); err == nil {
+												getTransaction.Active = 1
+												getTransaction.DateModified = time.Now()
+												getTransaction.ModifiedBy = int(v.ReceivingAgentId)
+
+												// Update transfers table to complete the transaction
+												if err := models.UpdateTransfersById(getTransaction); err == nil {
+													c.Data["json"] = "OK"
+													c.Ctx.Output.SetStatus(201)
+													c.Data["json"] = cashout_
+												} else {
+													c.Data["json"] = err.Error()
+												}
+											} else {
+												c.Data["json"] = err.Error()
+											}
 										} else {
 											c.Data["json"] = err.Error()
 										}
 									} else {
 										c.Data["json"] = err.Error()
 									}
-								} else {
-									c.Data["json"] = err.Error()
+
 								}
 							}
 

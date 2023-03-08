@@ -3,15 +3,16 @@ package models
 import (
 	"errors"
 	"fmt"
-	"github.com/beego/beego/v2/client/orm"
 	"reflect"
 	"strings"
+
+	"github.com/beego/beego/v2/client/orm"
 	// "time"
 )
 
 type Balance_inc struct {
-	Balance_incId 	int64  `orm:"auto" orm: "omitempty"`
-	Balance     float32  
+	Balance_incId int64   `orm:"auto" orm: "omitempty"`
+	Balance       float32 `orm: "omitempty"`
 }
 
 func init() {
@@ -22,6 +23,17 @@ func AddBalance_inc(m *Balance_inc) (id int64, err error) {
 	o := orm.NewOrm()
 	id, err = o.Insert(m)
 	return
+}
+
+// GetBalanceById retrieves Balances by Id. Returns error if
+// Id doesn't exist
+func GetBalanceIncById(id int64) (v *Balance_inc, err error) {
+	o := orm.NewOrm()
+	v = &Balance_inc{Balance_incId: id}
+	if err = o.QueryTable(new(Balance_inc)).Filter("Balance_incId", id).RelatedSel().One(v); err == nil {
+		return v, nil
+	}
+	return nil, err
 }
 
 // GetAllBalance_inc retrieves all Balance_inc matches certain condition. Returns empty list if

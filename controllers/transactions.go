@@ -30,6 +30,8 @@ func (c *TransactionsController) URLMapping() {
 	c.Mapping("GetAgentTransactionsWithAgentID", c.GetAgentTransactionsWithAgentID)
 	c.Mapping("CashOut", c.CashOut)
 	c.Mapping("GetCashOutDetails", c.GetCashOutDetails)
+	c.Mapping("GetAgentTransfersWithAgentID", c.GetAgentTransfersWithAgentID)
+	c.Mapping("GetAgentCashoutsWithAgentID", c.GetAgentCashoutsWithAgentID)
 }
 
 func RandStringBytes(n int) string {
@@ -94,43 +96,49 @@ func (c *TransactionsController) Post() {
 					// If Sender has enough balance to transact
 					if float32(senderBalance.Balance) > v.Amount {
 
-						// Saving in transfers
-						var tr = models.Transfers{TransactionId: int(t.TransactionId), SendingAgentId: v.SendingAgentId, SendingBranchId: v.SendingBranchId, Sending_balance_before: float32(senderBalance.Balance), Sending_balance_after: 0.0, Amount: v.Amount, SenderName: v.SenderName, SenderNumber: v.SenderNumber, ReceiverName: v.ReceiverName, ReceiverNumber: v.ReceiverNumber, TransactionCode: txnCode, Active: 2, DateCreated: time.Now(), CreatedBy: v.SendingBranchId, StatusCode: statusCode}
+						agent_, err := models.GetAgentsById(v.SendingAgentId)
 
-						// If save is successful
-						if _, err := models.AddTransfers(&tr); err == nil {
-							senderAfterBalance := models.Balances{AgentId: int(v.SendingAgentId), Balance: v.Amount}
-							// senderBalance := models.Balances{AgentId: int(v.SendingAgentId), Balance: v.Amount}
-							// Update sender's balance
-							if err := models.UpdateBalancesByAgentId(&senderAfterBalance, "subtract"); err == nil {
-								// var balUpdate = models.Transfers{TransferId: tr.TransferId}
+						if err != nil {
+							c.Data["json"] = s_err.Error()
+						} else {
+							// Saving in transfers
+							var tr = models.Transfers{TransactionId: int(t.TransactionId), SendingAgent: agent_, SendingBranchId: v.SendingBranchId, Sending_balance_before: float32(senderBalance.Balance), Sending_balance_after: 0.0, Amount: v.Amount, SenderName: v.SenderName, SenderNumber: v.SenderNumber, ReceiverName: v.ReceiverName, ReceiverNumber: v.ReceiverNumber, TransactionCode: txnCode, Active: 2, DateCreated: time.Now(), CreatedBy: v.SendingBranchId, StatusCode: statusCode}
 
-								h_balance, err := models.GetBalanceIncById(2)
+							// If save is successful
+							if _, err := models.AddTransfers(&tr); err == nil {
+								senderAfterBalance := models.Balances{AgentId: int(v.SendingAgentId), Balance: v.Amount}
+								// senderBalance := models.Balances{AgentId: int(v.SendingAgentId), Balance: v.Amount}
+								// Update sender's balance
+								if err := models.UpdateBalancesByAgentId(&senderAfterBalance, "subtract"); err == nil {
+									// var balUpdate = models.Transfers{TransferId: tr.TransferId}
 
-								if err != nil {
-									c.Data["json"] = err.Error()
-								} else {
-									tr.Sending_balance_after = senderAfterBalance.Balance
+									h_balance, err := models.GetBalanceIncById(2)
 
-									h_balance.Balance = h_balance.Balance + v.Amount
+									if err != nil {
+										c.Data["json"] = err.Error()
+									} else {
+										tr.Sending_balance_after = senderAfterBalance.Balance
 
-									if err := models.UpdateBalance_incById(h_balance); err == nil {
-										// Update balance after in transfers table after sender balance has been updated
-										if err := models.UpdateTransfersById(&tr); err == nil {
-											c.Data["json"] = "OK"
-											c.Ctx.Output.SetStatus(201)
-											c.Data["json"] = t
-										} else {
-											c.Data["json"] = err.Error()
+										h_balance.Balance = h_balance.Balance + v.Amount
+
+										if err := models.UpdateBalance_incById(h_balance); err == nil {
+											// Update balance after in transfers table after sender balance has been updated
+											if err := models.UpdateTransfersById(&tr); err == nil {
+												c.Data["json"] = "OK"
+												c.Ctx.Output.SetStatus(201)
+												c.Data["json"] = t
+											} else {
+												c.Data["json"] = err.Error()
+											}
 										}
 									}
-								}
 
+								} else {
+									c.Data["json"] = err.Error()
+								}
 							} else {
-								c.Data["json"] = err.Error()
+								// return errors.New("Error: Invalid order. Must be either [asc|desc]")
 							}
-						} else {
-							// return errors.New("Error: Invalid order. Must be either [asc|desc]")
 						}
 					}
 				}
@@ -347,6 +355,46 @@ func (c *TransactionsController) GetAgentTransactionsWithAgentID() {
 	idStr := c.Ctx.Input.Param(":agentId")
 	id, _ := strconv.ParseInt(idStr, 0, 64)
 	v, err := models.GetTransactionsByAgentId(id)
+	if err != nil {
+		c.Data["json"] = err.Error()
+	} else {
+		c.Data["json"] = v
+	}
+	c.ServeJSON()
+}
+
+// GetAgentTransfersWithAgentID ...
+// @Title Get Agent Transfers With AgentID
+// @Description get Transfers by agent Id
+// @Param	agentId		path 	string	true		"The key for staticblock"
+// @Success 200 {object} models.TransfersResponse
+// @Failure 403 :agentId is empty
+// @router /get-agent-transfers/:agentId [get]
+func (c *TransactionsController) GetAgentTransfersWithAgentID() {
+	idStr := c.Ctx.Input.Param(":agentId")
+	id, _ := strconv.ParseInt(idStr, 0, 64)
+
+	v, err := models.GetTransfersByAgentId(id)
+	if err != nil {
+		c.Data["json"] = err.Error()
+	} else {
+		c.Data["json"] = v
+	}
+
+	c.ServeJSON()
+}
+
+// GetAgentCashoutsWithAgentID ...
+// @Title Get Agent Cashouts With AgentID
+// @Description get Cashouts by agent Id
+// @Param	agentId		path 	string	true		"The key for staticblock"
+// @Success 200 {object} models.CashOuts
+// @Failure 403 :agentId is empty
+// @router /get-agent-cashouts/:agentId [get]
+func (c *TransactionsController) GetAgentCashoutsWithAgentID() {
+	idStr := c.Ctx.Input.Param(":agentId")
+	id, _ := strconv.ParseInt(idStr, 0, 64)
+	v, err := models.GetCashOutsByAgentId(id)
 	if err != nil {
 		c.Data["json"] = err.Error()
 	} else {

@@ -405,6 +405,24 @@ func init() {
 
 	beego.GlobalControllerRouter["ridler_payments/controllers:TransactionsController"] = append(beego.GlobalControllerRouter["ridler_payments/controllers:TransactionsController"],
 		beego.ControllerComments{
+			Method:           "GetAgentTransfersWithAgentID",
+			Router:           `/get-agent-transfers/:agentId`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams:     param.Make(),
+			Filters:          nil,
+			Params:           nil})
+
+	beego.GlobalControllerRouter["ridler_payments/controllers:TransactionsController"] = append(beego.GlobalControllerRouter["ridler_payments/controllers:TransactionsController"],
+		beego.ControllerComments{
+			Method:           "GetAgentCashoutsWithAgentID",
+			Router:           `/get-agent-cashouts/:agentId`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams:     param.Make(),
+			Filters:          nil,
+			Params:           nil})
+
+	beego.GlobalControllerRouter["ridler_payments/controllers:TransactionsController"] = append(beego.GlobalControllerRouter["ridler_payments/controllers:TransactionsController"],
+		beego.ControllerComments{
 			Method:           "Put",
 			Router:           `/:id`,
 			AllowHTTPMethods: []string{"put"},

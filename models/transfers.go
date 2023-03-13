@@ -7,13 +7,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/astaxie/beego/logs"
 	"github.com/beego/beego/v2/client/orm"
 )
 
 type Transfers struct {
 	TransferId             int64 `orm:"auto"`
 	TransactionId          int
-	SendingAgentId         int64
+	SendingAgent           *Agents `orm:"rel(fk)"`
 	SendingBranchId        int
 	Sending_balance_before float32
 	Sending_balance_after  float32
@@ -63,6 +64,22 @@ func GetTransfersByCode(code string) (v *Transfers, err error) {
 	if err = o.QueryTable(new(Transfers)).Filter("TransactionCode", code).RelatedSel().One(v); err == nil {
 		return v, nil
 	}
+	return nil, err
+}
+
+// GetTransfersById retrieves Transfers by Id. Returns error if
+// Id doesn't exist
+func GetTransfersByAgentId(id int64) (v []*Transfers, err error) {
+	o := orm.NewOrm()
+	// g := &Transfers{SendingAgentId: agent_}
+	// var tr []*Transfers
+	logs.Info("About to query transfers table")
+	if m, err := o.QueryTable(new(Transfers)).Filter("SendingAgent", id).RelatedSel().All(&v); err == nil {
+		logs.Info("Returned rows", m)
+		return v, nil
+	}
+
+	logs.Info("Error is ", v)
 	return nil, err
 }
 

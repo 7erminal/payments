@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/astaxie/beego/logs"
 	"github.com/beego/beego/v2/client/orm"
 )
 
@@ -58,6 +59,19 @@ func GetCashOutsByTransactionId(transactionid int64) (v *CashOuts, err error) {
 	o := orm.NewOrm()
 	v = &CashOuts{CashoutId: transactionid}
 	if err = o.QueryTable(new(CashOuts)).Filter("TransactionId", transactionid).RelatedSel().One(v); err == nil {
+		return v, nil
+	}
+	return nil, err
+}
+
+// GetTransfersById retrieves Transfers by Id. Returns error if
+// Id doesn't exist
+func GetCashOutsByAgentId(id int64) (v []*CashOuts, err error) {
+	o := orm.NewOrm()
+	// v = &Transfers{SendingAgentId: id}
+
+	if m, err := o.QueryTable(new(CashOuts)).Filter("ReceivingAgentId", id).RelatedSel().All(&v); err == nil {
+		logs.Info("Returned rows", m)
 		return v, nil
 	}
 	return nil, err

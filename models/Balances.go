@@ -29,6 +29,17 @@ func AddBalances(m *Balances) (id int64, err error) {
 	return
 }
 
+// GetBalanceById retrieves Balances by Id. Returns error if
+// Id doesn't exist
+func GetBalanceById(id int64) (v *Balances, err error) {
+	o := orm.NewOrm()
+	v = &Balances{BalanceId: id}
+	if err = o.QueryTable(new(Balances)).Filter("AgentId", id).RelatedSel().One(v); err == nil {
+		return v, nil
+	}
+	return nil, err
+}
+
 // GetBalanceByAgentId retrieves Balances by Agent Id. Returns error if
 // Id doesn't exist
 func GetBalanceByAgentId(id int) (v *Balances, err error) {

@@ -741,6 +741,27 @@ paths:
           description: '{int} models.Transactions'
         "403":
           description: body is empty
+  /transactions/get-agent-cashouts/{agentId}:
+    get:
+      tags:
+      - transactions
+      description: |-
+        get Cashouts by agent Id
+        <br>
+      operationId: TransactionsController.Get Agent Cashouts With AgentID
+      parameters:
+      - in: path
+        name: agentId
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.CashOuts'
+        "403":
+          description: :agentId is empty
   /transactions/get-agent-transactions/{agentId}:
     get:
       tags:
@@ -760,6 +781,27 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/models.Transactions'
+        "403":
+          description: :agentId is empty
+  /transactions/get-agent-transfers/{agentId}:
+    get:
+      tags:
+      - transactions
+      description: |-
+        get Transfers by agent Id
+        <br>
+      operationId: TransactionsController.Get Agent Transfers With AgentID
+      parameters:
+      - in: path
+        name: agentId
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.TransfersResponse'
         "403":
           description: :agentId is empty
   /users/:
@@ -1022,6 +1064,55 @@ definitions:
         type: string
       BranchPhoneNumber:
         type: string
+  models.CashOuts:
+    title: CashOuts
+    type: object
+    properties:
+      Active:
+        type: integer
+        format: int64
+      Amount:
+        type: integer
+        format: int64
+      CashoutId:
+        type: integer
+        format: int64
+      CreatedBy:
+        type: integer
+        format: int64
+      DateCreated:
+        type: string
+        format: datetime
+      DateModified:
+        type: string
+        format: datetime
+      ModifiedBy:
+        type: integer
+        format: int64
+      ReceiverName:
+        type: string
+      ReceiverNumber:
+        type: string
+      Receiving_balance_after:
+        type: number
+        format: float
+      Receiving_balance_before:
+        type: number
+        format: float
+      ReceivingAgentId:
+        type: integer
+        format: int64
+      ReceivingBranchId:
+        type: integer
+        format: int64
+      StatusCode:
+        type: integer
+        format: int64
+      TransactionCode:
+        type: string
+      TransactionId:
+        type: integer
+        format: int64
   models.CashoutRequest:
     title: CashoutRequest
     type: object
@@ -1229,6 +1320,58 @@ definitions:
         type: integer
         format: int64
       TransactionType:
+        type: integer
+        format: int64
+  models.TransfersResponse:
+    title: TransfersResponse
+    type: object
+    properties:
+      Active:
+        type: integer
+        format: int64
+      Amount:
+        type: number
+        format: float
+      CreatedBy:
+        type: integer
+        format: int64
+      DateCreated:
+        type: string
+        format: datetime
+      DateModified:
+        type: string
+        format: datetime
+      ModifiedBy:
+        type: integer
+        format: int64
+      ReceiverName:
+        type: string
+      ReceiverNumber:
+        type: string
+      SenderName:
+        type: string
+      SenderNumber:
+        type: string
+      Sending_balance_after:
+        type: number
+        format: float
+      Sending_balance_before:
+        type: number
+        format: float
+      SendingAgentId:
+        $ref: '#/definitions/models.Agents'
+      SendingBranchId:
+        type: integer
+        format: int64
+      StatusCode:
+        type: integer
+        format: int64
+      TransactionCode:
+        type: string
+      TransactionId:
+        type: integer
+        format: int64
+      TransferId:
         type: integer
         format: int64
   models.Users:

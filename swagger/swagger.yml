@@ -1099,9 +1099,8 @@ definitions:
       Receiving_balance_before:
         type: number
         format: float
-      ReceivingAgentId:
-        type: integer
-        format: int64
+      ReceivingAgent:
+        $ref: '#/definitions/models.Agents'
       ReceivingBranchId:
         type: integer
         format: int64

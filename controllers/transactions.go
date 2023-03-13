@@ -240,51 +240,59 @@ func (c *TransactionsController) CashOut() {
 
 				timeCreated := time.Now()
 
-				var cashout_ = models.CashOuts{TransactionId: getTransaction.TransactionId, ReceivingAgentId: v.ReceivingAgentId, ReceivingBranchId: v.ReceivingBranchId, Receiving_balance_before: 0.0, Receiving_balance_after: 0.0, Amount: int(v.Amount), StatusCode: statusCode, ReceiverName: v.ReceiverName, ReceiverNumber: v.ReceiverNumber, TransactionCode: v.Code, DateCreated: timeCreated, CreatedBy: int(v.ReceivingAgentId), ModifiedBy: 0, Active: 2}
+				agent_, err := models.GetAgentsById(v.ReceivingAgentId)
 
-				// If save is successful
-				if _, err := models.AddCashOuts(&cashout_); err == nil {
-					if getTransaction.Amount == v.Amount {
-						logs.Info("Amounts match")
-						if getTransaction.ReceiverNumber == v.ReceiverNumber {
-							// Check the balance of the receiver
-							receiverBalance, r_err := models.GetBalanceByAgentId(int(v.ReceivingAgentId))
+				if err != nil {
+					c.Data["json"] = err.Error()
+				} else {
+					var cashout_ = models.CashOuts{TransactionId: getTransaction.TransactionId, ReceivingAgent: agent_, ReceivingBranchId: v.ReceivingBranchId, Receiving_balance_before: 0.0, Receiving_balance_after: 0.0, Amount: int(v.Amount), StatusCode: statusCode, ReceiverName: v.ReceiverName, ReceiverNumber: v.ReceiverNumber, TransactionCode: v.Code, DateCreated: timeCreated, CreatedBy: int(v.ReceivingAgentId), ModifiedBy: 0, Active: 2}
 
-							if r_err != nil {
-								c.Data["json"] = r_err.Error()
-							} else {
-								cashout_.Receiving_balance_before = receiverBalance.Balance
+					// If save is successful
+					if _, err := models.AddCashOuts(&cashout_); err == nil {
+						if getTransaction.Amount == v.Amount {
+							logs.Info("Amounts match")
+							if getTransaction.ReceiverNumber == v.ReceiverNumber {
+								// Check the balance of the receiver
+								receiverBalance, r_err := models.GetBalanceByAgentId(int(v.ReceivingAgentId))
 
-								receiverAfterBalance := models.Balances{AgentId: int(v.ReceivingAgentId), Balance: v.Amount}
-
-								h_balance, err := models.GetBalanceIncById(2)
-
-								if err != nil {
-									c.Data["json"] = err.Error()
+								if r_err != nil {
+									c.Data["json"] = r_err.Error()
 								} else {
+									cashout_.Receiving_balance_before = receiverBalance.Balance
 
-									if err := models.UpdateBalancesByAgentId(&receiverAfterBalance, "add"); err == nil {
-										// var balUpdate = models.Transfers{TransferId: tr.TransferId}
-										h_balance.Balance = h_balance.Balance - v.Amount
+									receiverAfterBalance := models.Balances{AgentId: int(v.ReceivingAgentId), Balance: v.Amount}
 
-										if err := models.UpdateBalance_incById(h_balance); err == nil {
-											cashout_.Receiving_balance_after = receiverAfterBalance.Balance
+									h_balance, err := models.GetBalanceIncById(2)
 
-											cashout_.DateModified = time.Now()
-											cashout_.Active = 1
-											cashout_.ModifiedBy = int(v.ReceivingAgentId)
+									if err != nil {
+										c.Data["json"] = err.Error()
+									} else {
 
-											// Update balance after in transfers table after sender balance has been updated
-											if err := models.UpdateCashOutsById(&cashout_); err == nil {
-												getTransaction.Active = 1
-												getTransaction.DateModified = time.Now()
-												getTransaction.ModifiedBy = int(v.ReceivingAgentId)
+										if err := models.UpdateBalancesByAgentId(&receiverAfterBalance, "add"); err == nil {
+											// var balUpdate = models.Transfers{TransferId: tr.TransferId}
+											h_balance.Balance = h_balance.Balance - v.Amount
 
-												// Update transfers table to complete the transaction
-												if err := models.UpdateTransfersById(getTransaction); err == nil {
-													c.Data["json"] = "OK"
-													c.Ctx.Output.SetStatus(201)
-													c.Data["json"] = cashout_
+											if err := models.UpdateBalance_incById(h_balance); err == nil {
+												cashout_.Receiving_balance_after = receiverAfterBalance.Balance
+
+												cashout_.DateModified = time.Now()
+												cashout_.Active = 1
+												cashout_.ModifiedBy = int(v.ReceivingAgentId)
+
+												// Update balance after in transfers table after sender balance has been updated
+												if err := models.UpdateCashOutsById(&cashout_); err == nil {
+													getTransaction.Active = 1
+													getTransaction.DateModified = time.Now()
+													getTransaction.ModifiedBy = int(v.ReceivingAgentId)
+
+													// Update transfers table to complete the transaction
+													if err := models.UpdateTransfersById(getTransaction); err == nil {
+														c.Data["json"] = "OK"
+														c.Ctx.Output.SetStatus(201)
+														c.Data["json"] = cashout_
+													} else {
+														c.Data["json"] = err.Error()
+													}
 												} else {
 													c.Data["json"] = err.Error()
 												}
@@ -294,24 +302,22 @@ func (c *TransactionsController) CashOut() {
 										} else {
 											c.Data["json"] = err.Error()
 										}
-									} else {
-										c.Data["json"] = err.Error()
+
 									}
-
 								}
-							}
 
+							} else {
+								c.Data["json"] = "Recipient number does not match"
+							}
 						} else {
-							c.Data["json"] = "Recipient number does not match"
+							logs.Info("Amounts do not match")
+
+							c.Data["json"] = "Amounts do not match"
 						}
 					} else {
-						logs.Info("Amounts do not match")
-
-						c.Data["json"] = "Amounts do not match"
+						// return errors.New("Error: Invalid order. Must be either [asc|desc]")
+						c.Data["json"] = err.Error()
 					}
-				} else {
-					// return errors.New("Error: Invalid order. Must be either [asc|desc]")
-					c.Data["json"] = err.Error()
 				}
 			}
 		} else {

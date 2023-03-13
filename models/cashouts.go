@@ -14,7 +14,7 @@ import (
 type CashOuts struct {
 	CashoutId                int64 `orm:"auto"`
 	TransactionId            int
-	ReceivingAgentId         int64
+	ReceivingAgent           *Agents `orm:"rel(fk)"`
 	ReceivingBranchId        int
 	Receiving_balance_before float32
 	Receiving_balance_after  float32
@@ -70,7 +70,7 @@ func GetCashOutsByAgentId(id int64) (v []*CashOuts, err error) {
 	o := orm.NewOrm()
 	// v = &Transfers{SendingAgentId: id}
 
-	if m, err := o.QueryTable(new(CashOuts)).Filter("ReceivingAgentId", id).RelatedSel().All(&v); err == nil {
+	if m, err := o.QueryTable(new(CashOuts)).Filter("ReceivingAgent", id).RelatedSel().All(&v); err == nil {
 		logs.Info("Returned rows", m)
 		return v, nil
 	}

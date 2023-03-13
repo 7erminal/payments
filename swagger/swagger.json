@@ -1515,9 +1515,8 @@
                 "ReceiverNumber": {
                     "type": "string"
                 },
-                "ReceivingAgentId": {
-                    "type": "integer",
-                    "format": "int64"
+                "ReceivingAgent": {
+                    "$ref": "#/definitions/models.Agents"
                 },
                 "ReceivingBranchId": {
                     "type": "integer",

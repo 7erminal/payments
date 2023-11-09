@@ -77,7 +77,7 @@ func (c *TransactionsController) Post() {
 
 		transactionTypeConv, _ := strconv.Atoi(transactionType)
 
-		statusCode := 2002
+		statusCode := 2001
 
 		var t = models.Transactions{RequestId: r.RequestId, SendingAgentId: v.SendingAgentId, SendingBranchId: v.SendingBranchId, Amount: v.Amount, SenderName: v.SenderName, SenderNumber: v.SenderNumber, ReceiverName: v.ReceiverName, ReceiverNumber: v.ReceiverNumber, TransactionType: transactionTypeConv, Active: 1, DateCreated: time.Now(), CreatedBy: v.SendingBranchId, TransactionCode: txnCode, StatusCode: statusCode}
 		if _, err := models.AddTransactions(&t); err == nil {
@@ -111,7 +111,7 @@ func (c *TransactionsController) Post() {
 								// Update sender's balance
 								if err := models.UpdateBalancesByAgentId(&senderAfterBalance, "subtract"); err == nil {
 									// var balUpdate = models.Transfers{TransferId: tr.TransferId}
-
+									// 2 is the frozen balance of the system. This balance should be exactly equal to the amount that has been transfered and waiting to be redeemed
 									h_balance, err := models.GetBalanceIncById(2)
 
 									if err != nil {
@@ -122,6 +122,8 @@ func (c *TransactionsController) Post() {
 										h_balance.Balance = h_balance.Balance + v.Amount
 
 										if err := models.UpdateBalance_incById(h_balance); err == nil {
+											tr.StatusCode = 2002
+
 											// Update balance after in transfers table after sender balance has been updated
 											if err := models.UpdateTransfersById(&tr); err == nil {
 												c.Data["json"] = "OK"
@@ -224,7 +226,7 @@ func (c *TransactionsController) CashOut() {
 
 		logs.Info("About to go get code")
 
-		statusCode := 2002
+		statusCode := 2001
 
 		getTransaction, err := models.GetTransfersByCode(v.Code)
 
@@ -278,12 +280,14 @@ func (c *TransactionsController) CashOut() {
 												cashout_.DateModified = time.Now()
 												cashout_.Active = 1
 												cashout_.ModifiedBy = int(v.ReceivingAgentId)
+												cashout_.StatusCode = 2000
 
 												// Update balance after in transfers table after sender balance has been updated
 												if err := models.UpdateCashOutsById(&cashout_); err == nil {
 													getTransaction.Active = 1
 													getTransaction.DateModified = time.Now()
 													getTransaction.ModifiedBy = int(v.ReceivingAgentId)
+													getTransaction.StatusCode = 2000
 
 													// Update transfers table to complete the transaction
 													if err := models.UpdateTransfersById(getTransaction); err == nil {
